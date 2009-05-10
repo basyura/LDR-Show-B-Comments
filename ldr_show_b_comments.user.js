@@ -71,8 +71,11 @@ function createComment(bm) {
     buf.push("<div style='width:" + getContentsWidth() + "px;align:center'>");
     buf.push("<div style='background-color:#4872ff;color:#ffffff;padding:5px;' align='left'>");
     buf.push("&nbsp;" + bm.title);
-    if(bm.count != -1) {
-        buf.push(" (" + bm.count +  ")");
+    buf.push("&nbsp;&nbsp;");
+    if(bm.count > 0) {
+        buf.push("<span style='background-color:#FFCCCC;color:#FF0000;font-size:10pt;padding:2px'>");
+        buf.push(bm.count + " users");
+        buf.push("</span>");
     }
     buf.push("</div>");
     buf.push("<div id='" + ID_CONTENTS + "' style='");

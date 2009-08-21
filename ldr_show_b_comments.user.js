@@ -41,7 +41,7 @@ function showComments(link) {
             if(!isExistComment()) {
                 return;
             }
-            var text = res.responseText;
+            var text = "(" + res.responseText +")";
             var bm = text == "(null)" ? {"title":"no comment" , "count":-1,"bookmarks":[]} : eval(text);
             appendComment().innerHTML = createComment(bm);
 		},

@@ -1,5 +1,5 @@
 // ==UserScript==
-// @version     0.0.5
+// @version     0.0.6
 // @name        LDR Show B Comments
 // @namespace   http://basyura.org
 // @include     http://reader.livedoor.com/reader/*
@@ -10,6 +10,7 @@
    
 const JSON_API_URL = "http://b.hatena.ne.jp/entry/json/";
 const TORIGGER_KEY = "m";
+const REMOVE_KEY   = "M";
 const ID_COMMENT   = "hatena_bookmark_comment";
 const ID_CONTENTS  = "hatena_bookmark_comment";
 const CONTENTS_WIDTH_RATE    = 0.8;
@@ -22,7 +23,7 @@ w.register_hook('after_init', function() {
            var comment  = appendComment();
            var contents = getSingleNodeValue(comment , ".//div[@id='" + ID_CONTENTS + "']");
             if(contents.scrollHeight <= contents.scrollTop + getContentsHeight()) {
-                document.body.removeChild(comment);
+                removeComment();
             }
             contents.scrollTop += CONTENTS_SCROLL_HEIGHT;
         }
@@ -30,6 +31,9 @@ w.register_hook('after_init', function() {
             appendComment().innerHTML = createComment({"title":"loading ...","count":-1,"bookmarks":[]});
             showComments(w.get_active_item(true).link);
         }
+    });
+    w.Keybind.add(REMOVE_KEY, function() {
+        removeComment();
     });
 });
 // private methods
@@ -44,11 +48,17 @@ function showComments(link) {
             var text = "(" + res.responseText +")";
             var bm = text == "(null)" ? {"title":"no comment" , "count":-1,"bookmarks":[]} : eval(text);
             appendComment().innerHTML = createComment(bm);
-		},
+        },
         onerror: function(res){
         },
     }
     window.setTimeout(GM_xmlhttpRequest, 0, opt);
+}
+function removeComment() {
+    var comment = document.getElementById(ID_COMMENT);
+    if(comment != null) {
+        document.body.removeChild(comment);
+    }
 }
 function isExistComment() {
     var comment = document.getElementById(ID_COMMENT);
@@ -68,7 +78,7 @@ function appendComment() {
 function createComment(bm) {
     var bookmarks = bm.bookmarks.reverse();
     var buf = [];
-    buf.push("<div style='width:" + getContentsWidth() + "px;align:center'>");
+    buf.push("<div style='width:" + getContentsWidth() + "px;'>");
     buf.push("<div style='background-color:#4872ff;color:#ffffff;padding:5px;' align='left'>");
     buf.push("&nbsp;" + bm.title);
     buf.push("&nbsp;&nbsp;");
